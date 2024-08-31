@@ -7,6 +7,13 @@ const port = args.port;
 let registration = "";
 let project = "";
 
+fs.readFile("home.html", (err, data) => {
+  if (err) {
+    throw err;
+  }
+  home = data;
+});
+
 fs.readFile("project.html", (err, data) => {
   if (err) {
     throw err;
@@ -27,6 +34,10 @@ const server = http
     res.writeHeader(200, { contentType: "text/html" });
     switch (url) {
       case "/":
+        res.write(home);
+        res.end();
+        break;
+      case "/project":
         res.write(project);
         res.end();
         break;
