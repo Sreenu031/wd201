@@ -6,7 +6,7 @@ const fs = require("fs");
 const port = args.port;
 let registration = "";
 let project = "";
-
+let home = "";
 fs.readFile("home.html", (err, data) => {
   if (err) {
     throw err;
