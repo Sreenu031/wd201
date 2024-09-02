@@ -21,49 +21,57 @@ describe("Todo List Test Suite", () => {
 
   test("should mark a todo as completed", () => {
     add({
-      title: "Submit assignment",
+      title: "Submit assignment to teacher",
       complete: false,
       dueDate: new Date().toISOString().slice(0, 10),
     });
+
+    // Call markAsComplete with the correct index
     markAsComplete(0);
+    markAsComplete(0);
+
+    // Log the current state of all for debugging
+    console.log("All todos after marking as complete:", all);
+
+    // Check if the complete status has been updated
     expect(all[0].complete).toBe(true);
   });
 
   test("should retrieve overdue items", () => {
     add({
-      title: "Pay bills",
+      title: "Pay money to friend",
       complete: false,
       dueDate: new Date(Date.now() - 86400000).toISOString().slice(0, 10), // 1 day in the past
     });
     add({
-      title: "Meeting with team",
+      title: "Meeting with friends",
       complete: false,
       dueDate: new Date().toISOString().slice(0, 10),
     });
     const overdueItems = overdue();
     expect(overdueItems.length).toBe(1);
-    expect(overdueItems[0].title).toBe("Pay bills");
+    expect(overdueItems[0].title).toBe("Pay money to friend");
   });
 
   test("should retrieve due today items", () => {
     add({
-      title: "Daily standup meeting",
+      title: "eating out with friends",
       complete: false,
       dueDate: new Date().toISOString().slice(0, 10),
     });
     const dueTodayItems = dueToday();
     expect(dueTodayItems.length).toBe(1);
-    expect(dueTodayItems[0].title).toBe("Daily standup meeting");
+    expect(dueTodayItems[0].title).toBe("eating out with friends");
   });
 
   test("should retrieve due later items", () => {
     add({
-      title: "Plan weekend trip",
+      title: "going outside with friends",
       complete: false,
       dueDate: new Date(Date.now() + 86400000).toISOString().slice(0, 10), // 1 day in the future
     });
     const dueLaterItems = dueLater();
     expect(dueLaterItems.length).toBe(1);
-    expect(dueLaterItems[0].title).toBe("Plan weekend trip");
+    expect(dueLaterItems[0].title).toBe("going outside with friends");
   });
 });

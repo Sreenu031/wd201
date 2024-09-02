@@ -4,7 +4,7 @@ const todoList = () => {
     all.push(todoItem);
   };
   const markAsComplete = (index) => {
-    all[index].completed = true;
+    all[index].complete = true;
   };
 
   const overdue = () => {
