@@ -33,7 +33,6 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.lt]: today,
           },
-          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -44,7 +43,6 @@ module.exports = (sequelize, DataTypes) => {
       return await Todo.findAll({
         where: {
           dueDate: today,
-          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -57,7 +55,6 @@ module.exports = (sequelize, DataTypes) => {
           dueDate: {
             [Op.gt]: today,
           },
-          completed: false,
         },
         order: [["dueDate", "ASC"]],
       });
@@ -77,14 +74,25 @@ module.exports = (sequelize, DataTypes) => {
     displayableString() {
       const today = new Date().toISOString().split("T")[0];
       let checkbox = this.completed ? "[x]" : "[ ]";
+      let dueDateString = "";
 
-      // If the todo is due today, and it's incomplete, do not show the date
+      // Display due date for overdue tasks or future tasks if completed
+      if (this.dueDate !== today || this.completed) {
+        dueDateString = this.dueDate;
+      }
+
+      // Handle todos due today
       if (this.dueDate === today) {
+        // If the task is completed, do not show due date
+        if (this.completed) {
+          return `${this.id}. ${checkbox} ${this.title.trim()}`;
+        }
+        // If the task is incomplete and due today, do not show due date
         return `${this.id}. ${checkbox} ${this.title.trim()}`;
       }
 
-      // Otherwise, return the full string with the due date (for both overdue and future tasks)
-      return `${this.id}. ${checkbox} ${this.title.trim()} ${this.dueDate}`;
+      // For overdue or future tasks
+      return `${this.id}. ${checkbox} ${this.title.trim()} ${dueDateString}`;
     }
   }
 
