@@ -77,14 +77,20 @@ module.exports = (sequelize, DataTypes) => {
     displayableString() {
       const today = new Date().toISOString().split("T")[0];
       let checkbox = this.completed ? "[x]" : "[ ]";
+      let dueDateString = "";
 
-      // If the todo is due today, do not show the date, regardless of completion status
-      if (this.dueDate === today) {
+      // Show due date for past-due or future tasks if completed
+      if (this.dueDate !== today || this.completed) {
+        dueDateString = this.dueDate;
+      }
+
+      // If the todo is due today and incomplete, do not show the date
+      if (this.dueDate === today && !this.completed) {
         return `${this.id}. ${checkbox} ${this.title.trim()}`;
       }
 
-      // For all other cases, including completed past-due items, show the due date
-      return `${this.id}. ${checkbox} ${this.title.trim()} ${this.dueDate}`;
+      // For other cases, include the due date
+      return `${this.id}. ${checkbox} ${this.title.trim()} ${dueDateString}`;
     }
   }
 
