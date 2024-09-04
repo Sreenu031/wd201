@@ -84,12 +84,18 @@ module.exports = (sequelize, DataTypes) => {
         dueDateString = this.dueDate;
       }
 
-      // If the todo is due today and incomplete, do not show the date
-      if (this.dueDate === today && !this.completed) {
-        return `${this.id}. ${checkbox} ${this.title.trim()}`;
+      // Handle incomplete todos due today and completed todos due today
+      if (this.dueDate === today) {
+        if (this.completed) {
+          // For completed todos due today, do not show due date
+          return `${this.id}. ${checkbox} ${this.title.trim()}`;
+        } else {
+          // For incomplete todos due today, do not show due date
+          return `${this.id}. ${checkbox} ${this.title.trim()}`;
+        }
       }
 
-      // For other cases, include the due date
+      // For past-due or future tasks
       return `${this.id}. ${checkbox} ${this.title.trim()} ${dueDateString}`;
     }
   }
