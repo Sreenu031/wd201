@@ -1,20 +1,35 @@
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
+const path = require("path");
 app.use(bodyParser.json());
 
 const { Todo } = require("./models");
 
-app.get("/todos", async (req, res) => {
-  console.log("My TodosList:");
-  try {
-    const todo = await Todo.findAll();
-    return res.json(todo);
-  } catch (error) {
-    console.log(error);
-    res.status(422).json(error);
+app.set("view engine", "ejs");
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", async (req, res) => {
+  const allTodos = await Todo.getTodos();
+  if (req.accepts("html")) {
+    res.render("index", {
+      allTodos,
+    });
+  } else {
+    res.json({ allTodos });
   }
 });
+// app.get("/todos", async (req, res) => {
+//   console.log("My TodosList:");
+//   try {
+//     const todo = await Todo.findAll();
+//     return res.json(todo);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(422).json(error);
+//   }
+// });
 
 app.post("/todos", async (req, res) => {
   try {
