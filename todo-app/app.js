@@ -47,11 +47,11 @@ app.delete("/todos/:id", async (req, res) => {
     const todo = await Todo.findByPk(todoId);
 
     if (!todo) {
-      return res.status(404).json({ error: "Todo not found" });
+      return res.send(false).status(422);
     }
 
     await todo.destroy();
-    return res.json(true);
+    return res.send(todo ? true : false);
   } catch (error) {
     console.log(error);
     res.status(422).json(false);
