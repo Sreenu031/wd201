@@ -23,14 +23,14 @@ for (let i = 0; i < allTodos.length; i++) {
 <!-- Todo Categories -->
 <div>
     <!-- Overdue Section -->
-    <div class="mb-4">
-      <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+    <div class="mb-4" id= "overdue">
+      <h5 class="text-lg font-semibold text-gray-800 flex items-center">
         Overdue
-        <span
+        <span 
           class="ml-2 bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded-full"
           ><%= OverDue.length %></span
         >
-      </h2>
+      </h5>
       <div class="mt-2">
         <% OverDue.forEach(function(todo){ %>
             <label class="flex items-center Todo-item">
@@ -61,14 +61,14 @@ for (let i = 0; i < allTodos.length; i++) {
     </div>
   
     <!-- Due Today Section -->
-    <div class="mb-4">
-        <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+    <div id= "due-today" class="mb-4">
+        <h5 class="text-lg font-semibold text-gray-800 flex items-center">
             Due Today
           <span
             class="ml-2 bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded-full"
             ><%= Today.length %></span
           >
-        </h2>
+        </h5>
         <div class="mt-2">
           <% Today.forEach(function(todo){ %>
               <label class="flex items-center Todo-item">
@@ -99,14 +99,14 @@ for (let i = 0; i < allTodos.length; i++) {
       </div>
   
     <!-- Due Later Section -->
-    <div class="mb-4">
-        <h2 class="text-lg font-semibold text-gray-800 flex items-center">
-          Due Later
+    <div id= "due-later" class="mb-4">
+        <h5 class="text-lg font-semibold text-gray-800 flex items-center">
+            Due Later
           <span
             class="ml-2 bg-gray-200 text-gray-600 text-sm px-2 py-1 rounded-full"
             ><%= Later.length %></span
           >
-        </h2>
+        </h5>
         <div class="mt-2">
           <% Later.forEach(function(todo){ %>
               <label class="flex items-center Todo-item">
