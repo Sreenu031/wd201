@@ -20,16 +20,16 @@ app.get("/", async (req, res) => {
     res.json({ allTodos });
   }
 });
-// app.get("/todos", async (req, res) => {
-//   console.log("My TodosList:");
-//   try {
-//     const todo = await Todo.findAll();
-//     return res.json(todo);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(422).json(error);
-//   }
-// });
+app.get("/todos", async (req, res) => {
+  console.log("My TodosList:");
+  try {
+    const todo = await Todo.findAll();
+    return res.json(todo);
+  } catch (error) {
+    console.log(error);
+    res.status(422).json(error);
+  }
+});
 
 app.post("/todos", async (req, res) => {
   try {
