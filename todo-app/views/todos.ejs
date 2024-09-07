@@ -22,9 +22,9 @@ for (let i = 0; i < allTodos.length; i++) {
 
 <!-- Todo Categories -->
 <div>
-    <h5>Overdue <span
-      class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full"
-      ><%= OverDue.length %></span></h5>
+    <h5>Overdue</h5><span
+    class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full"
+    ><%= OverDue.length %></span>
     
     <ul class="list-none">
         <% OverDue.forEach(function(todo){ %>
@@ -42,9 +42,10 @@ for (let i = 0; i < allTodos.length; i++) {
       </li>
       <%} )%>
     </ul>
-    <h5>Due Today<span
-        class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full"
-        ><%= Today.length %></span></h5>
+    <h5>Due Today</h5><span
+    class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full flex-none"
+    ><%= Today.length %></span>
+    
         <ul class="list-none">
             <% Today.forEach(function(todo){ %>
           <li class="todo-item">
@@ -64,10 +65,9 @@ for (let i = 0; i < allTodos.length; i++) {
 
 
     <h5>Due Later
-        <span
-        class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full"
-        ><%= Later.length %></span>
-    </h5>
+    </h5><span
+    class="ml-2 bg-gray-200 text-gray-600 text-sm px-1.5 py-0.5 rounded-full"
+    ><%= Later.length %></span>
     <ul class="list-none">
         <% Later.forEach(function(todo){ %>
       <li class="todo-item">
