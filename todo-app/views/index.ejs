@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,28 +7,32 @@
     <link rel="stylesheet" href="./css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="bg-gray-100 flex justify-center items-center h-screen">
-    <div class="bg-white p-5 rounded-lg shadow-lg w-full max-w-lg">
-      <%- include('header.ejs') %>
-      <div class="flex mb-6">
-        <input
-          type="text"
-          placeholder="What's next?"
-          class="flex-1 border border-gray-300 p-2 rounded-l-lg focus:outline-none focus:ring focus:border-blue-300"
-        />
-        <input
-          type="date"
-          class="border border-gray-300 p-2 rounded-r-lg focus:outline-none focus:ring focus:border-blue-300 ml-2"
-        />
-        <button
-          class="bg-green-500 text-white px-4 py-2 rounded-lg ml-2 hover:bg-green-600"
-        >
-          Add
-        </button>
-      </div>
+  <body>
+    <div class="grid grid-cols-6">
+      <div class="col-start-2 col-span-2">
+        <%-include('header.ejs') %>
+        <form>
+          <div class="flex gap-2 ">
+            <div class="flex-auto">
+              <input
+                type="text"
+                class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm"
+                placeholder="What's Next"
+                required
+              />
+            </div>
+            <div class="flex-auto">
+              <input type="date" name="" id="" class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm leading-4"/>
+            </div>
+            <div class="flex-none">
+              <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">Add</button>
+            </div>
+          </div>
+        </form>
 
-      <%- include('todos.ejs', {allTodos: allTodos}); %> <%-
-      include('footer.ejs') %>
+       <%-include('todos.ejs',{allTodos:allTodos}) %>
+       <%-include('footer.ejs') %>
+      </div>
     </div>
   </body>
 </html>
