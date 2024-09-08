@@ -1,10 +1,14 @@
 const express = require("express");
 const app = express();
+var csrf = require("tiny-csrf");
+var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
 const path = require("path");
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended:false}))
-
+app.use(cookieParser("some thing secret string!"))
+app.use(csrf("this_should_be_32_character_long",["POST","PUT","DELETE"]))
 const { Todo } = require("./models");
 
 app.set("view engine", "ejs");
@@ -16,6 +20,7 @@ app.get("/", async (req, res) => {
   if (req.accepts("html")) {
     res.render("index", {
       allTodos,
+      csrfToken:req.csrfToken(),
     });
   } else {
     res.json({ allTodos });
@@ -46,11 +51,15 @@ app.post("/todos", async (req, res) => {
   }
 });
 
-app.put("/todos/:id/markAsCompleted", async (req, res) => {
+app.put("/todos/:id", async (req, res) => {
   const todo = await Todo.findByPk(req.params.id);
   try {
-    const updatedTodo = await todo.markAsCompleted();
-    return res.json(updatedTodo);
+    if(todo){
+      const updatedTodo = await todo.setCompletionStatus();
+      return res.json(updatedTodo);
+    }
+    res.json({error:"no todo find"})
+    
   } catch (error) {
     console.log(error);
     res.status(422).json(error);

@@ -3,15 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <title>Document</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+      var token = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
       function updateTodo(id){
         
-        fetch(`/todos/${id}/markAsCompleted`,{
+        fetch(`/todos/${id}`,{
           method:"put",
           headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            "_csrf":token
+          })
         })
         .then((res)=>{
           if(res.ok){
@@ -26,6 +31,9 @@
         fetch(`/todos/${id}`,{
           method:"delete",
           headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            "_csrf":token
+          })
         })
         .then((res)=>{
           if(res.ok){
@@ -41,6 +49,7 @@
       <div class="col-start-2 col-span-2">
         <%-include('header.ejs') %>
         <form action="/todos" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="flex gap-2 ">
             <div class="flex-auto">
               <input
@@ -52,7 +61,7 @@
               />
             </div>
             <div class="flex-auto">
-              <input type="date" name="dueDate" id="" class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm leading-4"/>
+              <input type="date" name="dueDate" id="" class="border border-gray-300 text-gray-900 w-full rounded p-2 text-sm leading-4" required/>
             </div>
             <div class="flex-none">
               <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">Add</button>

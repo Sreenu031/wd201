@@ -1,14 +1,19 @@
 const db = require("../models/index");
 const app = require("../app");
+const cheerio = require("cheerio");
 const request = require("supertest");
 const { Json } = require("sequelize/lib/utils");
 
 let server, agent;
+function extractCsrfToken(res){
+  var $ = cheerio.load(res.text);
+  return $('[name=_csrf]').val();
+}
 
 describe("Todo test suite", () => {
   beforeAll(async () => {
     await db.sequelize.sync({ force: true });
-    server = app.listen(5000, () => {});
+    server = app.listen(4000, () => {});
     agent = request.agent(server);
   });
   afterAll(async () => {
@@ -17,15 +22,41 @@ describe("Todo test suite", () => {
   });
 
   test("response with json at /todos", async () => {
+    const res = await agent.get('/');
+    const csrfToken = extractCsrfToken(res);
     const response = await agent.post("/todos").send({
       title: "Buy a milk",
       dueDate: new Date().toISOString(),
       completed: false,
+      "_csrf":csrfToken,
     });
     expect(response.statusCode).toBe(302);
     
   });
-
+  test("updating the todo", async () => {
+    const res = await agent.get('/');
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      title: "Buy a milk",
+      dueDate: new Date().toISOString(),
+      completed: false,
+      "_csrf":csrfToken,
+    });
+    expect(response.statusCode).toBe(302);
+    
+  });
+  test("delete the todo", async () => {
+    const res = await agent.get('/');
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      title: "Buy a milk",
+      dueDate: new Date().toISOString(),
+      completed: false,
+      "_csrf":csrfToken,
+    });
+    expect(response.statusCode).toBe(302);
+    
+  });
   // test("Mark a todo as complete", async () => {
   //   // Create a new todo
   //   const response = await agent.post("/todos").send({
