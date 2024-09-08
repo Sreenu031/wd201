@@ -14,10 +14,16 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
-    static getTodos() {
+    static async getTodos() {
       return this.findAll();
     }
-
+    static async remove(id){
+      return this.destroy({
+        where:{
+          id
+        }
+      })
+    }
     markAsCompleted() {
       return this.update({ completed: true });
     }

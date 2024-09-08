@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const path = require("path");
 app.use(bodyParser.json());
+app.use(express.urlencoded({extended:false}))
 
 const { Todo } = require("./models");
 
@@ -38,7 +39,7 @@ app.post("/todos", async (req, res) => {
       dueDate: req.body.dueDate,
       completed: false,
     });
-    return res.json(todo);
+    return res.redirect('/')
   } catch (error) {
     console.log(error);
     res.status(422).json(error);
@@ -59,14 +60,8 @@ app.put("/todos/:id/markAsCompleted", async (req, res) => {
 app.delete("/todos/:id", async (req, res) => {
   const todoId = req.params.id;
   try {
-    const todo = await Todo.findByPk(todoId);
-
-    if (!todo) {
-      return res.send(false).status(422);
-    }
-
-    await todo.destroy();
-    return res.send(todo ? true : false);
+    await Todo.remove(todoId)
+    return res.json({success:true})
   } catch (error) {
     console.log(error);
     res.status(422).json(false);
