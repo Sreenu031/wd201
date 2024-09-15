@@ -77,9 +77,15 @@ app.use(function(request, response, next) {
 });
 
 app.get("/", async (req, res) => {
-  res.render("index",{
-    csrfToken:req.csrfToken(),
-  })
+  if (req.isAuthenticated()) {
+    // If the user is logged in, redirect to /todos
+    return res.redirect("/todos");
+  } else {
+    // If the user is not logged in, render the index (home) page
+    res.render("index", {
+      csrfToken: req.csrfToken(),
+    });
+  }
 });
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
   const loginUser = req.user.id;
