@@ -48,6 +48,7 @@
     <div class="grid grid-cols-6">
       <div class="col-start-2 col-span-2">
         <%-include('header.ejs') %>
+        <a href="/signout">SignOut</a>
         <form action="/todos" method="post">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="flex gap-2 ">
@@ -70,7 +71,22 @@
         </form>
 
        <%-include('todo.ejs',{allTodos:allTodos}) %>
+
+       <% if (messages.error && messages.error.length > 0) { %>
+        <div class="alert alert-danger">
+          <ul>
+            <% messages.error.forEach(function(message) { %>
+              <li><%= message %></li>
+            <% }) %>
+          </ul>
+        </div>
+      <% } %>
+      
+
+
        <%-include('footer.ejs') %>
+
+       
       </div>
     </div>
   </body>

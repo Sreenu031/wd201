@@ -4,6 +4,7 @@ var csrf = require("tiny-csrf");
 var cookieParser = require('cookie-parser');
 const bodyParser = require("body-parser");
 const path = require("path");
+const flash = require("connect-flash");
 
 const passport = require("passport")
 const connectEnsureLogin = require('connect-ensure-login')
@@ -22,7 +23,7 @@ app.use(csrf("this_should_be_32_character_long",["POST","PUT","DELETE"]))
 app.use(session({
   secret:"my-super-secret-key-2323423423423",
   cookie:{
-    maxAge:24 * 60 * 60 * 1000,
+    maxAge:24 * 60 * 60 * 2000,
   }
 }));
 
@@ -30,20 +31,22 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new LocalStrategy({
-  userNameField:'email',
+  usernameField:'email',
   passwordField:'password',
 },(username,password,done)=>{
+  
   User.findOne({where:{email:username}})
   .then(async (user)=>{
+    
     const result = await bcrypt.compare(password,user.password);
  if(result){
   return done(null,user)
  }
     else{
-      done("invalid password")
+      return done(null,false,{message:"invalid password"})
     }
   }).catch((error)=>{
-    return (error)
+    return done(error)
   })
 }))
 
@@ -64,8 +67,14 @@ passport.deserializeUser((id,done)=>{
 const { Todo,User } = require("./models");
 
 app.set("view engine", "ejs");
-
+app.set("views",path.join(__dirname,"views"));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(flash());
+
+app.use(function(request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 
 app.get("/", async (req, res) => {
   res.render("index",{
@@ -73,7 +82,8 @@ app.get("/", async (req, res) => {
   })
 });
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
-  const allTodos = await Todo.getTodos();
+  const loginUser = req.user.id;
+  const allTodos = await Todo.getTodos(loginUser);
   if (req.accepts("html")) {
     res.render("todos", {
       allTodos,
@@ -114,9 +124,16 @@ app.get('/login',(req,res)=>{
     csrfToken:req.csrfToken(),
   });
 });
-
-app.post("/session",passport.authenticate("local",{failureRedirect:"/login"}),(req,res)=>{
-  console.log(req.user)
+app.get('/signout',(req,res,next)=>{
+  req.logout((error)=>{
+    if(error){
+      return next(error);
+    }
+    res.redirect("/")
+  })
+})
+app.post("/session",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),(req,res)=>{
+  
   res.redirect('/todos')
 })
 
@@ -126,15 +143,20 @@ app.post("/todos", async (req, res) => {
       title: req.body.title,
       dueDate: req.body.dueDate,
       completed: false,
+      userId:req.user.id,
     });
-    return res.redirect('/')
+    return res.redirect('/todos')
   } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      error.errors.forEach((err) => req.flash('error', err.message));
+      return res.redirect('/todos');
+    }
     console.log(error);
-    res.status(422).json(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-app.put("/todos/:id", async (req, res) => {
+app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (req, res) => {
   const todo = await Todo.findByPk(req.params.id);
   try {
     if(todo){
@@ -152,7 +174,7 @@ app.put("/todos/:id", async (req, res) => {
 app.delete("/todos/:id", async (req, res) => {
   const todoId = req.params.id;
   try {
-    await Todo.remove(todoId)
+    await Todo.remove(todoId,req.user.id)
     return res.json({success:true})
   } catch (error) {
     console.log(error);

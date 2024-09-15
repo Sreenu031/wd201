@@ -13,17 +13,20 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey:'userId'
       })
     }
-    static addTodo({ title, dueDate }) {
-      return this.create({ title: title, dueDate: dueDate, completed: false });
+    static addTodo({ title, dueDate,userId }) {
+      return this.create({ title: title, dueDate: dueDate, completed: false,userId });
     }
 
-    static async getTodos() {
-      return this.findAll();
+    static async getTodos(userId) {
+      return this.findAll({where:{
+        userId,
+      }});
     }
-    static async remove(id){
+    static async remove(id,userId){
       return this.destroy({
         where:{
-          id
+          id,
+          userId,
         }
       })
     }
@@ -35,9 +38,28 @@ module.exports = (sequelize, DataTypes) => {
   }
   Todo.init(
     {
-      title: DataTypes.STRING,
-      dueDate: DataTypes.DATEONLY,
-      completed: DataTypes.BOOLEAN,
+      title:
+      {type:DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "*Title cannot be empty",
+          },
+        },
+      }, 
+      dueDate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+        validate: {
+          notEmpty: {
+            msg: "*Due date cannot be empty",
+          },
+        },
+      },
+      completed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       sequelize,

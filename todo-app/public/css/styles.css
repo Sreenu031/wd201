@@ -5,3 +5,10 @@ body {
 .Todo-Item:hover .trash-icon {
   display: block;
 }
+
+.alert-danger{
+  font-size: large;
+  color:red;
+  padding-top: 10px;
+
+}
